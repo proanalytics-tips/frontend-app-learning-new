@@ -118,6 +118,7 @@ const OutlineTab = () => {
 
   return (
     <>
+      <hr />
       <div data-learner-type={learnerType} className="row w-100 mx-0 my-3 justify-content-between">
         <div className="col-12 col-sm-auto p-0">
           <div role="heading" aria-level="1" className="h2">{title}</div>
@@ -125,15 +126,15 @@ const OutlineTab = () => {
       </div>
       <div className="row course-outline-tab">
         <AccountActivationAlert />
-        <div className="col-12">
+        {/* <div className="col-12">
           <AlertList
             topic="outline-private-alerts"
             customAlerts={{
               ...privateCourseAlert,
             }}
           />
-        </div>
-        <div className="col col-12 col-md-8">
+        </div> */}
+        <div className="col-12">
           <AlertList
             topic="outline-course-alerts"
             className="mb-3"
@@ -169,23 +170,23 @@ const OutlineTab = () => {
             </>
           )}
         </div>
-        {rootCourseId && (
-          <div className="col col-12 col-md-4">
-            <ProctoringInfoPanel />
+        {/* {rootCourseId && (
+          <div className="col col-12 col-md-4"> */}
+            {/* <ProctoringInfoPanel /> */}
             { /** Defer showing the goal widget until the ProctoringInfoPanel has resolved or has been determined as
              disabled to avoid components bouncing around too much as screen is rendered */ }
-            {(!enableProctoredExams || proctoringPanelStatus === 'loaded') && weeklyLearningGoalEnabled && (
+            {/* {(!enableProctoredExams || proctoringPanelStatus === 'loaded') && weeklyLearningGoalEnabled && (
               <WeeklyLearningGoalCard
                 daysPerWeek={selectedGoal && 'daysPerWeek' in selectedGoal ? selectedGoal.daysPerWeek : null}
                 subscribedToReminders={selectedGoal && 'subscribedToReminders' in selectedGoal ? selectedGoal.subscribedToReminders : false}
               />
-            )}
-            <CourseTools />
+            )} */}
+            {/* <CourseTools />
             <CourseOutlineTabNotificationsSlot courseId={courseId} />
             <CourseDates />
-            <CourseHandouts />
-          </div>
-        )}
+            <CourseHandouts /> */}
+          {/* </div>
+        )} */}
       </div>
     </>
   );

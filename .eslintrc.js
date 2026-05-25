@@ -1,21 +1,27 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-const { createConfig } = require('@openedx/frontend-build');
+const { createConfig } = require("@openedx/frontend-build");
 
-const config = createConfig('eslint', {
+const config = createConfig("eslint", {
   rules: {
     // TODO: all these rules should be renabled/addressed. temporarily turned off to unblock a release.
-    'react-hooks/rules-of-hooks': 'off',
-    'react-hooks/exhaustive-deps': 'off',
-    'import/no-extraneous-dependencies': 'off',
-    'no-restricted-exports': 'off',
-    'react/jsx-no-useless-fragment': 'off',
-    'react/no-unknown-property': 'off',
-    'func-names': 'off',
+    "react-hooks/rules-of-hooks": "off",
+    "react-hooks/exhaustive-deps": "off",
+    "import/no-extraneous-dependencies": "off",
+    "no-restricted-exports": "off",
+    "react/jsx-no-useless-fragment": "off",
+    "react/no-unknown-property": "off",
+    "func-names": "off",
+    "linebreak-style": "off",
+    "react/jsx-indent": "off",
+    "@typescript-eslint/quotes": "off",
+    "implicit-arrow-linebreak": "off",
+    "operator-linebreak": "off",
+    "@typescript-eslint/comma-dangle": "off",
   },
   settings: {
-    'import/resolver': {
+    "import/resolver": {
       webpack: {
-        config: 'webpack.prod.config.js',
+        config: "webpack.prod.config.js",
       },
     },
   },

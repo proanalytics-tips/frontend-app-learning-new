@@ -214,7 +214,7 @@ const Sequence = ({
             />
           </div>
 
-          <div className="unit-container flex-grow-1 pt-4">
+          <div className="unit-container flex-grow-1">
             <SequenceContent
               courseId={courseId}
               gated={gated}
@@ -247,7 +247,7 @@ const Sequence = ({
             {defaultContent}
           </SequenceExamWrapper>
         </div>
-        <CourseLicense license={license || undefined} />
+        {/* <CourseLicense license={license || undefined} /> */}
       </>
     );
   }

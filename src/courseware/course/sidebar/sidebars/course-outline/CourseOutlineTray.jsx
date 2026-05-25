@@ -103,7 +103,7 @@ const CourseOutlineTray = () => {
       'bg-white m-0 fixed-top w-100 vh-100': shouldDisplayFullScreen,
     })}
     >
-      <section className="outline-sidebar w-100">
+      <section className="outline-sidebar w-100 ">
         {sidebarHeading}
         <ol id="outline-sidebar-outline" className="list-unstyled">
           {isDisplaySequenceLevel

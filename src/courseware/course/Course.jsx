@@ -80,7 +80,7 @@ const Course = ({
       <Helmet>
         <title>{`${pageTitleBreadCrumbs.join(' | ')} | ${getConfig().SITE_NAME}`}</title>
       </Helmet>
-      <div className="position-relative d-flex align-items-xl-center mb-4 mt-1 flex-column flex-xl-row">
+      <div className="position-relative d-flex align-items-xl-center mb-2 mt-1 flex-column flex-xl-row">
         <CourseBreadcrumbsSlot
           courseId={courseId}
           sectionId={section ? section.id : null}
@@ -88,7 +88,7 @@ const Course = ({
           isStaff={isStaff}
           unitId={unitId}
         />
-        {shouldDisplayChat && (
+        {/* {shouldDisplayChat && (
           <>
             <Chat
               enabled={course.learningAssistantEnabled}
@@ -99,11 +99,11 @@ const Course = ({
               unitId={unitId}
             />
           </>
-        )}
-        <div className="w-100 d-flex align-items-center">
+        )} */}
+        {/* <div className="w-100 d-flex align-items-center">
           <CourseOutlineMobileSidebarTriggerSlot />
           <NotificationsDiscussionsSidebarTriggerSlot courseId={courseId} />
-        </div>
+        </div> */}
       </div>
 
       <AlertList topic="sequence" />

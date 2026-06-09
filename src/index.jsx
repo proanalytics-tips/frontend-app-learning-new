@@ -35,10 +35,13 @@ import CourseAccessErrorPage from './generic/CourseAccessErrorPage';
 import DecodePageRoute from './decode-page-route';
 import { DECODE_ROUTES, ROUTES } from './constants';
 import PreferencesUnsubscribe from './preferences-unsubscribe';
+
 import PageNotFound from './generic/PageNotFound';
 
 subscribe(APP_READY, () => {
   const root = createRoot(document.getElementById('root'));
+
+  
 
   root.render(
     <StrictMode>
@@ -116,7 +119,7 @@ subscribe(APP_READY, () => {
                             slice="courseHome"
                             isProgressTab
                           >
-                            <ProgressTab />
+                              <ProgressTab />
                           </TabContainer>
                         </DecodePageRoute>
                       )}

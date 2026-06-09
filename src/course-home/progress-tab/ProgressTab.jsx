@@ -1,6 +1,8 @@
 import React from 'react';
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import { useWindowSize } from '@openedx/paragon';
 import { useContextId } from '../../data/hooks';
+
 import ProgressTabCertificateStatusSidePanelSlot from '../../plugin-slots/ProgressTabCertificateStatusSidePanelSlot';
 
 import CourseCompletion from './course-completion/CourseCompletion';
@@ -14,7 +16,16 @@ import { useModel } from '../../generic/model-store';
 
 const ProgressTab = () => {
   const courseId = useContextId();
-  const { disableProgressGraph } = useModel('progress', courseId);
+  // const { disableProgressGraph } = useModel('progress', courseId);
+  const {
+    completionSummary,
+    disableProgressGraph,
+    creditCourseRequirements,
+    gradesFeatureIsFullyLocked,
+    gradesFeatureIsPartiallyLocked,
+    gradingPolicy,
+  } = useModel('progress', courseId);
+
 
   const windowWidth = useWindowSize().width;
   if (windowWidth === undefined) {
@@ -26,6 +37,18 @@ const ProgressTab = () => {
 
   return (
     <>
+      <PluginSlot
+        id="org.openedx.frontend.learning.course_progress_page"
+        idAliases={['course_home_progress_slot']}
+        pluginProps={{
+          completionSummary,
+          disableProgressGraph,
+          creditCourseRequirements,
+          gradesFeatureIsFullyLocked,
+          gradesFeatureIsPartiallyLocked,
+          gradingPolicy,
+        }}
+      >
       <ProgressHeader />
       <div className="row w-100 m-0">
         {/* Main body */}
@@ -42,6 +65,7 @@ const ProgressTab = () => {
           <ProgressTabRelatedLinksSlot />
         </div>
       </div>
+      </PluginSlot>
     </>
   );
 };

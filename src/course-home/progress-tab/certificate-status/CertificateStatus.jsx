@@ -46,6 +46,7 @@ const CertificateStatus = () => {
   } = certificateData || {};
 
   const entranceExamPassed = entranceExamData?.entranceExamPassed ?? null;
+  const safeGradeRange = gradeRange ?? {};
 
   const mode = getCourseExitMode(
     certificateData,
@@ -85,7 +86,7 @@ const CertificateStatus = () => {
 
   let gradeEventName = 'not_passing';
   if (userHasPassingGrade) {
-    gradeEventName = Object.entries(gradeRange).length > 1 ? 'passing_grades' : 'passing';
+    gradeEventName = Object.entries(safeGradeRange).length > 1 ? 'passing_grades' : 'passing';
   }
 
   const dashboardLink = <DashboardLink />;

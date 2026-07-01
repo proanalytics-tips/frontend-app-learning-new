@@ -30,11 +30,11 @@ const ResponsiveText = ({
 };
 
 const NoticeRow = ({
-  wideScreen, icon, bgClass, message,
+  wideScreen, icon, bgStyle, message,
 }) => {
   const textClass = wideScreen ? 'h4 m-0 align-bottom' : 'h5 align-bottom';
   return (
-    <div className={`row w-100 m-0 px-4 py-3 py-md-4 rounded-bottom ${bgClass}`}>
+    <div className="row w-100 m-0 px-4 py-3 py-md-4 rounded-bottom" style={bgStyle}>
       <div className="col-auto p-0">{icon}</div>
       <div className="col-11 pl-2 px-0">
         <span className={textClass}>{message}</span>
@@ -55,14 +55,16 @@ const CourseGradeFooter = ({ passingGrade }) => {
 
   const latestDueDate = getLatestDueDateInFuture(assignmentTypeGradeSummary);
   const wideScreen = useWindowSize().width >= breakpoints.medium.minWidth;
-  const hasLetterGrades = Object.keys(gradeRange).length > 1;
+  const safeGradeRange = gradeRange ?? {};
+  const hasLetterGrades = Object.keys(safeGradeRange).length > 1;
+  const warningNoticeStyle = { backgroundColor: 'rgb(255, 231, 206)' };
 
   // build footer text
   let footerText = intl.formatMessage(messages.courseGradeFooterNonPassing, { passingGrade });
   if (isPassing) {
     if (hasLetterGrades) {
-      const minGradeRangeCutoff = gradeRange[letterGrade] * 100;
-      const possibleMaxGradeRangeValues = [...Object.values(gradeRange).filter(
+      const minGradeRangeCutoff = (safeGradeRange[letterGrade] ?? 0) * 100;
+      const possibleMaxGradeRangeValues = [...Object.values(safeGradeRange).filter(
         (grade) => (grade * 100 > minGradeRangeCutoff),
       )];
       const maxGradeRangeCutoff = possibleMaxGradeRangeValues.length ? Math.min(...possibleMaxGradeRangeValues) * 100
@@ -89,7 +91,7 @@ const CourseGradeFooter = ({ passingGrade }) => {
       <NoticeRow
         wideScreen={wideScreen}
         icon={passingIcon}
-        bgClass={isPassing ? 'bg-success-100' : 'bg-warning-100'}
+        bgStyle={isPassing ? undefined : warningNoticeStyle}
         message={(
           <ResponsiveText
             wideScreen={wideScreen}
@@ -104,7 +106,7 @@ const CourseGradeFooter = ({ passingGrade }) => {
         <NoticeRow
           wideScreen={wideScreen}
           icon={<Icon src={WarningFilled} className="d-inline-flex align-bottom" />}
-          bgClass="bg-warning-100"
+          bgStyle={warningNoticeStyle}
           message={intl.formatMessage(messages.courseGradeFooterDueDateNotice, {
             dueDate: intl.formatDate(latestDueDate, {
               year: 'numeric',
@@ -131,8 +133,12 @@ ResponsiveText.propTypes = {
 NoticeRow.propTypes = {
   wideScreen: PropTypes.bool.isRequired,
   icon: PropTypes.element.isRequired,
-  bgClass: PropTypes.string.isRequired,
+  bgStyle: PropTypes.shape({}),
   message: PropTypes.string.isRequired,
+};
+
+NoticeRow.defaultProps = {
+  bgStyle: undefined,
 };
 
 CourseGradeFooter.propTypes = {

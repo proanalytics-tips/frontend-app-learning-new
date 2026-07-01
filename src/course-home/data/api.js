@@ -1,7 +1,7 @@
-import { camelCaseObject, getConfig } from '@edx/frontend-platform';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { logInfo } from '@edx/frontend-platform/logging';
-import { appendBrowserTimezoneToUrl } from '../../utils';
+import { camelCaseObject, getConfig } from "@edx/frontend-platform";
+import { getAuthenticatedHttpClient } from "@edx/frontend-platform/auth";
+import { logInfo } from "@edx/frontend-platform/logging";
+import { appendBrowserTimezoneToUrl } from "../../utils";
 
 /**
  * Tweak the metadata for consistency
@@ -13,11 +13,11 @@ function normalizeCourseHomeCourseMetadata(metadata, rootSlug) {
   const data = camelCaseObject(metadata);
   return {
     ...data,
-    tabs: data.tabs.map(tab => ({
+    tabs: data.tabs.map((tab) => ({
       // The API uses "courseware" as a slug for both courseware and the outline tab.
       // If needed, we switch it to "outline" here for
       // use within the MFE to differentiate between course home and courseware.
-      slug: tab.tabId === 'courseware' ? rootSlug : tab.tabId,
+      slug: tab.tabId === "courseware" ? rootSlug : tab.tabId,
       title: tab.title,
       url: tab.url,
     })),
@@ -31,9 +31,9 @@ export function normalizeOutlineBlocks(courseId, blocks) {
     sections: {},
     sequences: {},
   };
-  Object.values(blocks).forEach(block => {
+  Object.values(blocks).forEach((block) => {
     switch (block.type) {
-      case 'course':
+      case "course":
         models.courses[block.id] = {
           id: courseId,
           title: block.display_name,
@@ -42,7 +42,7 @@ export function normalizeOutlineBlocks(courseId, blocks) {
         };
         break;
 
-      case 'chapter':
+      case "chapter":
         models.sections[block.id] = {
           complete: block.complete,
           id: block.id,
@@ -53,7 +53,7 @@ export function normalizeOutlineBlocks(courseId, blocks) {
         };
         break;
 
-      case 'sequential':
+      case "sequential":
         models.sequences[block.id] = {
           complete: block.complete,
           description: block.description,
@@ -72,28 +72,32 @@ export function normalizeOutlineBlocks(courseId, blocks) {
         break;
 
       default:
-        logInfo(`Unexpected course block type: ${block.type} with ID ${block.id}.  Expected block types are course, chapter, and sequential.`);
+        logInfo(
+          `Unexpected course block type: ${block.type} with ID ${block.id}.  Expected block types are course, chapter, and sequential.`,
+        );
     }
   });
 
   // Next go through each list and use their child lists to decorate those children with a
   // reference back to their parent.
-  Object.values(models.courses).forEach(course => {
+  Object.values(models.courses).forEach((course) => {
     if (Array.isArray(course.sectionIds)) {
-      course.sectionIds.forEach(sectionId => {
+      course.sectionIds.forEach((sectionId) => {
         const section = models.sections[sectionId];
         section.courseId = course.id;
       });
     }
   });
 
-  Object.values(models.sections).forEach(section => {
+  Object.values(models.sections).forEach((section) => {
     if (Array.isArray(section.sequenceIds)) {
-      section.sequenceIds.forEach(sequenceId => {
+      section.sequenceIds.forEach((sequenceId) => {
         if (sequenceId in models.sequences) {
           models.sequences[sequenceId].sectionId = section.id;
         } else {
-          logInfo(`Section ${section.id} has child block ${sequenceId}, but that block is not in the list of sequences.`);
+          logInfo(
+            `Section ${section.id} has child block ${sequenceId}, but that block is not in the list of sequences.`,
+          );
         }
       });
     }
@@ -149,20 +153,32 @@ export async function getProgressTabData(courseId, targetUserId) {
     const { data } = await getAuthenticatedHttpClient().get(url);
     const camelCasedData = camelCaseObject(data);
 
+    camelCasedData.assignmentTypeGradeSummary =
+      camelCasedData.assignmentTypeGradeSummary ?? [];
+    camelCasedData.sectionScores = camelCasedData.sectionScores ?? [];
+    camelCasedData.gradingPolicy = camelCasedData.gradingPolicy ?? {};
+    camelCasedData.completionSummary = camelCasedData.completionSummary ?? {};
+
     // We replace gradingPolicy.gradeRange with the original data to preserve the intended casing for the grade.
     // For example, if a grade range key is "A", we do not want it to be camel cased (i.e. "A" would become "a")
     // in order to preserve a course team's desired grade formatting.
-    camelCasedData.gradingPolicy.gradeRange = data.grading_policy.grade_range;
+    camelCasedData.gradingPolicy.gradeRange =
+      data.grading_policy?.grade_range ?? {};
 
-    camelCasedData.gradesFeatureIsFullyLocked = camelCasedData.completionSummary.lockedCount > 0;
+    camelCasedData.gradesFeatureIsFullyLocked =
+      (camelCasedData.completionSummary.lockedCount ?? 0) > 0;
 
     camelCasedData.gradesFeatureIsPartiallyLocked = false;
     if (camelCasedData.gradesFeatureIsFullyLocked) {
       camelCasedData.sectionScores.forEach((chapter) => {
-        chapter.subsections.forEach((subsection) => {
+        (chapter.subsections ?? []).forEach((subsection) => {
           // If something is eligible to be gated by content type gating and would show up on the progress page
-          if (subsection.assignmentType !== null && subsection.hasGradedAssignment && subsection.showGrades
-            && (subsection.numPointsPossible > 0 || subsection.numPointsEarned > 0)) {
+          if (
+            subsection.assignmentType !== null &&
+            subsection.hasGradedAssignment &&
+            subsection.showGrades &&
+            (subsection.numPointsPossible > 0 || subsection.numPointsEarned > 0)
+          ) {
             // but the learner still has access to it, then we are in a partially locked, rather than fully locked state
             // since the learner has access to some (but not all) content that would normally be locked
             if (subsection.learnerHasAccess) {
@@ -178,7 +194,9 @@ export async function getProgressTabData(courseId, targetUserId) {
   } catch (error) {
     const httpErrorStatus = error?.response?.status;
     if (httpErrorStatus === 404) {
-      global.location.replace(`${getConfig().LMS_BASE_URL}/courses/${courseId}/progress`);
+      global.location.replace(
+        `${getConfig().LMS_BASE_URL}/courses/${courseId}/progress`,
+      );
       return {};
     }
     if (httpErrorStatus === 401) {
@@ -243,7 +261,7 @@ export function getTimeOffsetMillis(headerDate, requestTime, responseTime) {
   if (headerDate !== undefined) {
     const headerTime = Date.parse(headerDate);
     const roundTripMillis = requestTime - responseTime;
-    const localTime = responseTime - (roundTripMillis / 2); // Roughly compensate for transit time
+    const localTime = responseTime - roundTripMillis / 2; // Roughly compensate for transit time
     timeOffsetMillis = headerTime - localTime;
   }
 
@@ -269,14 +287,13 @@ export async function getOutlineTabData(courseId) {
 
   const responseTime = Date.now();
 
-  const {
-    data,
-    headers,
-  } = tabData;
+  const { data, headers } = tabData;
 
   const accessExpiration = camelCaseObject(data.access_expiration);
   const certData = camelCaseObject(data.cert_data);
-  const courseBlocks = data.course_blocks ? normalizeOutlineBlocks(courseId, data.course_blocks.blocks) : {};
+  const courseBlocks = data.course_blocks
+    ? normalizeOutlineBlocks(courseId, data.course_blocks.blocks)
+    : {};
   const courseGoals = camelCaseObject(data.course_goals);
   const courseTools = camelCaseObject(data.course_tools);
   const datesBannerInfo = camelCaseObject(data.dates_banner_info);
@@ -289,10 +306,14 @@ export async function getOutlineTabData(courseId) {
   const hasEnded = data.has_ended;
   const offer = camelCaseObject(data.offer);
   const resumeCourse = camelCaseObject(data.resume_course);
-  const timeOffsetMillis = getTimeOffsetMillis(headers && headers.date, requestTime, responseTime);
+  const timeOffsetMillis = getTimeOffsetMillis(
+    headers && headers.date,
+    requestTime,
+    responseTime,
+  );
   const userHasPassingGrade = data.user_has_passing_grade;
   const verifiedMode = camelCaseObject(data.verified_mode);
-  const welcomeMessageHtml = data.welcome_message_html || '';
+  const welcomeMessageHtml = data.welcome_message_html || "";
 
   return {
     accessExpiration,
@@ -318,7 +339,9 @@ export async function getOutlineTabData(courseId) {
 }
 
 export async function postCourseDeadlines(courseId, model) {
-  const url = new URL(`${getConfig().LMS_BASE_URL}/api/course_experience/v1/reset_course_deadlines`);
+  const url = new URL(
+    `${getConfig().LMS_BASE_URL}/api/course_experience/v1/reset_course_deadlines`,
+  );
   return getAuthenticatedHttpClient().post(url.href, {
     course_key: courseId,
     research_event_data: { location: `${model}-tab` },
@@ -326,12 +349,23 @@ export async function postCourseDeadlines(courseId, model) {
 }
 
 export async function deprecatedPostCourseGoals(courseId, goalKey) {
-  const url = new URL(`${getConfig().LMS_BASE_URL}/api/course_home/save_course_goal`);
-  return getAuthenticatedHttpClient().post(url.href, { course_id: courseId, goal_key: goalKey });
+  const url = new URL(
+    `${getConfig().LMS_BASE_URL}/api/course_home/save_course_goal`,
+  );
+  return getAuthenticatedHttpClient().post(url.href, {
+    course_id: courseId,
+    goal_key: goalKey,
+  });
 }
 
-export async function postWeeklyLearningGoal(courseId, daysPerWeek, subscribedToReminders) {
-  const url = new URL(`${getConfig().LMS_BASE_URL}/api/course_home/save_course_goal`);
+export async function postWeeklyLearningGoal(
+  courseId,
+  daysPerWeek,
+  subscribedToReminders,
+) {
+  const url = new URL(
+    `${getConfig().LMS_BASE_URL}/api/course_home/save_course_goal`,
+  );
   return getAuthenticatedHttpClient().post(url.href, {
     course_id: courseId,
     days_per_week: daysPerWeek,
@@ -340,12 +374,16 @@ export async function postWeeklyLearningGoal(courseId, daysPerWeek, subscribedTo
 }
 
 export async function postDismissWelcomeMessage(courseId) {
-  const url = new URL(`${getConfig().LMS_BASE_URL}/api/course_home/dismiss_welcome_message`);
+  const url = new URL(
+    `${getConfig().LMS_BASE_URL}/api/course_home/dismiss_welcome_message`,
+  );
   await getAuthenticatedHttpClient().post(url.href, { course_id: courseId });
 }
 
 export async function postRequestCert(courseId) {
-  const url = new URL(`${getConfig().LMS_BASE_URL}/courses/${courseId}/generate_user_cert`);
+  const url = new URL(
+    `${getConfig().LMS_BASE_URL}/courses/${courseId}/generate_user_cert`,
+  );
   await getAuthenticatedHttpClient().post(url.href);
 }
 
@@ -358,18 +396,27 @@ export async function executePostFromPostEvent(postData, researchEventData) {
 }
 
 export async function unsubscribeFromCourseGoal(token) {
-  const url = new URL(`${getConfig().LMS_BASE_URL}/api/course_home/unsubscribe_from_course_goal/${token}`);
-  return getAuthenticatedHttpClient().post(url.href)
-    .then(res => camelCaseObject(res));
+  const url = new URL(
+    `${getConfig().LMS_BASE_URL}/api/course_home/unsubscribe_from_course_goal/${token}`,
+  );
+  return getAuthenticatedHttpClient()
+    .post(url.href)
+    .then((res) => camelCaseObject(res));
 }
 
 export async function getCoursewareSearchEnabled(courseId) {
-  const url = new URL(`${getConfig().LMS_BASE_URL}/courses/${courseId}/courseware-search/enabled/`);
+  const url = new URL(
+    `${getConfig().LMS_BASE_URL}/courses/${courseId}/courseware-search/enabled/`,
+  );
   const { data } = await getAuthenticatedHttpClient().get(url.href);
   return { enabled: data.enabled || false };
 }
 
-export async function searchCourseContentFromAPI(courseId, searchKeyword, options = {}) {
+export async function searchCourseContentFromAPI(
+  courseId,
+  searchKeyword,
+  options = {},
+) {
   const defaults = { page: 0, limit: 20 };
   const { page, limit } = { ...defaults, ...options };
 

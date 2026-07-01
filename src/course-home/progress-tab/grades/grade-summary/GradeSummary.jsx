@@ -13,9 +13,11 @@ const GradeSummary = () => {
     assignmentTypeGradeSummary,
   } = useModel('progress', courseId);
 
+  const safeAssignmentTypeGradeSummary = assignmentTypeGradeSummary ?? [];
+
   const [allOfSomeAssignmentTypeIsLocked, setAllOfSomeAssignmentTypeIsLocked] = useState(false);
 
-  if (assignmentTypeGradeSummary.length === 0) {
+  if (safeAssignmentTypeGradeSummary.length === 0) {
     return null;
   }
 

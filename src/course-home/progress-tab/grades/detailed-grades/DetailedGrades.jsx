@@ -25,7 +25,8 @@ const DetailedGrades = () => {
     sectionScores,
   } = useModel('progress', courseId);
 
-  const hasSectionScores = sectionScores.length > 0;
+  const safeSectionScores = sectionScores ?? [];
+  const hasSectionScores = safeSectionScores.length > 0;
   const emptyTableMsg = showUngradedAssignments()
     ? messages.detailedGradesEmpty : messages.detailedGradesEmptyOnlyGraded;
 
@@ -53,9 +54,9 @@ const DetailedGrades = () => {
   );
 
   return (
-    <section className="text-dark-700">
-      <h3 className="h4">{intl.formatMessage(messages.detailedGrades)}</h3>
-      <ul className="micro mb-3 pl-3 text-gray-700">
+    <section className="text-dark-700" >
+      <h3 className="h4" style={{ color: '#1a2d55' }}>{intl.formatMessage(messages.detailedGrades)}</h3>
+      {/* <ul className="micro mb-3 pl-3 text-gray-700">
         <li>
           <b>{intl.formatMessage(messages.practiceScoreLabel)} </b>
           {intl.formatMessage(messages.practiceScoreInfoText)}
@@ -64,9 +65,9 @@ const DetailedGrades = () => {
           <b>{intl.formatMessage(messages.gradedScoreLabel)} </b>
           {intl.formatMessage(messages.gradedScoreInfoText)}
         </li>
-      </ul>
+      </ul> */}
       {gradesFeatureIsPartiallyLocked && (
-        <div className="mb-3 small ml-0 d-inline">
+        <div className="mb-3 small ml-0 d-inline" >
           <Icon className="mr-1 mt-1 d-inline-flex" style={{ height: '1rem', width: '1rem' }} src={Locked} data-testid="locked-icon" />
           {intl.formatMessage(messages.gradeSummaryLimitedAccessExplanation, { upgradeLink: '' })}
         </div>

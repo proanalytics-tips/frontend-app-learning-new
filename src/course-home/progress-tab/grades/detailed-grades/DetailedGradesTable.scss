@@ -1,0 +1,65 @@
+.detailed-grades-table {
+  overflow: hidden;
+  border-radius: 8px;
+
+  table {
+    margin-bottom: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  th,
+  [role="columnheader"] {
+    background-color: #eef3ff !important;
+
+    & > span {
+      color: #1a2d55 !important;
+      border: none !important;
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 1.4;
+      padding: 6px 0px;
+    }
+  }
+
+  td,
+  [role="cell"] {
+    color: #1a2d55;
+    border: none !important;
+    font-size: 16px;
+    padding: 12px 16px;
+    line-height: 1.45;
+  }
+
+  tbody tr:nth-child(odd),
+  [role="rowgroup"]:not(:first-child) [role="row"]:nth-child(odd) {
+    background-color: #ffffff;
+  }
+
+  tbody tr:nth-child(even),
+  [role="rowgroup"]:not(:first-child) [role="row"]:nth-child(even) {
+    background-color: #f7f8fb;
+  }
+
+  a,
+  button {
+    color: #1a2d55;
+    font-size: inherit;
+  }
+
+  table tr:first-child th:first-child {
+    border-top-left-radius: 8px;
+  }
+
+  table tr:first-child th:last-child {
+    border-top-right-radius: 8px;
+  }
+
+  table tr:last-child td:first-child {
+    border-bottom-left-radius: 8px;
+  }
+
+  table tr:last-child td:last-child {
+    border-bottom-right-radius: 8px;
+  }
+}

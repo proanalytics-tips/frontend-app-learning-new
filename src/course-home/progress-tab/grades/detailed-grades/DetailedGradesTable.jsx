@@ -6,6 +6,7 @@ import { useModel } from '../../../../generic/model-store';
 import messages from '../messages';
 import SubsectionTitleCell from './SubsectionTitleCell';
 import { showUngradedAssignments } from '../../utils';
+import './DetailedGradesTable.scss';
 
 const DetailedGradesTable = () => {
   const intl = useIntl();
@@ -16,9 +17,10 @@ const DetailedGradesTable = () => {
   } = useModel('progress', courseId);
 
   const isLocaleRtl = isRtl(getLocale());
+  const safeSectionScores = sectionScores ?? [];
   return (
-    sectionScores.map((chapter) => {
-      const subsectionScores = chapter.subsections.filter(
+    safeSectionScores.map((chapter) => {
+      const subsectionScores = (chapter.subsections ?? []).filter(
         (subsection) => !!(
           (showUngradedAssignments() || subsection.hasGradedAssignment)
             && subsection.showGrades
@@ -36,7 +38,7 @@ const DetailedGradesTable = () => {
       }));
 
       return (
-        <div className="my-3" key={`${chapter.displayName}-grades-table`}>
+        <div className="my-3 detailed-grades-table" key={`${chapter.displayName}-grades-table`}>
           <DataTable
             data={detailedGradesData}
             itemCount={detailedGradesData.length}

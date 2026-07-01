@@ -23,21 +23,25 @@ const CourseGrade = () => {
     },
   } = useModel('progress', courseId);
 
-  const passingGrade = Number((Math.min(...Object.values(gradeRange)) * 100).toFixed(0));
+  const safeGradeRange = gradeRange ?? {};
+  const gradeRangeValues = Object.values(safeGradeRange);
+  const passingGrade = gradeRangeValues.length
+    ? Number((Math.min(...gradeRangeValues) * 100).toFixed(0))
+    : 0;
 
   const applyLockedOverlay = gradesFeatureIsFullyLocked ? 'locked-overlay' : '';
 
   return (
-    <section className="text-dark-700 my-4 rounded raised-card">
+    <section className="text-dark-700 my-4 rounded raised-card bg-white">
       {(gradesFeatureIsFullyLocked || gradesFeatureIsPartiallyLocked) && <CourseGradeHeader />}
       <div className={applyLockedOverlay} aria-hidden={gradesFeatureIsFullyLocked}>
         <div className="row w-100 m-0 p-4">
           <div className="col-12 col-sm-6 p-0 pr-sm-5.5">
-            <h2>{creditCourseRequirements
+            <h2 style={{ color: '#1a2d55' }}>{creditCourseRequirements
               ? intl.formatMessage(messages.gradesAndCredit)
               : intl.formatMessage(messages.grades)}
             </h2>
-            <p className="small">
+            <p className="small" style={{ color: '#1a2d55' }}>
               {intl.formatMessage(messages.courseGradeBody)}
             </p>
           </div>

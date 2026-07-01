@@ -22,6 +22,9 @@ const GradeSummaryTable = ({ setAllOfSomeAssignmentTypeIsLocked }) => {
     sectionScores,
   } = useModel('progress', courseId);
 
+  const safeAssignmentTypeGradeSummary = assignmentTypeGradeSummary ?? [];
+  const safeSectionScores = sectionScores ?? [];
+
   const footnotes = [];
 
   const getFootnoteId = (assignment) => {
@@ -38,7 +41,7 @@ const GradeSummaryTable = ({ setAllOfSomeAssignmentTypeIsLocked }) => {
   };
 
   const hasNoAccessToAssignmentsOfType = (assignmentType) => {
-    const subsectionAssignmentsOfType = sectionScores.map((chapter) => chapter.subsections.filter((subsection) => (
+    const subsectionAssignmentsOfType = safeSectionScores.map((chapter) => (chapter.subsections ?? []).filter((subsection) => (
       subsection.assignmentType === assignmentType && subsection.hasGradedAssignment
       && (subsection.numPointsPossible > 0 || subsection.numPointsEarned > 0)
     ))).flat();
@@ -54,7 +57,7 @@ const GradeSummaryTable = ({ setAllOfSomeAssignmentTypeIsLocked }) => {
     return false;
   };
 
-  const gradeSummaryData = assignmentTypeGradeSummary.map((assignment) => {
+  const gradeSummaryData = safeAssignmentTypeGradeSummary.map((assignment) => {
     const {
       averageGrade,
       numDroppable,

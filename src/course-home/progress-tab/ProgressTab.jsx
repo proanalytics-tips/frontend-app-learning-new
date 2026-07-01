@@ -24,6 +24,7 @@ const ProgressTab = () => {
     gradesFeatureIsFullyLocked,
     gradesFeatureIsPartiallyLocked,
     gradingPolicy,
+    sectionScores,
   } = useModel('progress', courseId);
 
 
@@ -47,6 +48,7 @@ const ProgressTab = () => {
           gradesFeatureIsFullyLocked,
           gradesFeatureIsPartiallyLocked,
           gradingPolicy,
+          sectionScores
         }}
       >
       <ProgressHeader />
@@ -62,7 +64,7 @@ const ProgressTab = () => {
         {/* Side panel */}
         <div className="col-12 col-md-4 p-0 px-md-4">
           <ProgressTabCertificateStatusSidePanelSlot />
-          <ProgressTabRelatedLinksSlot />
+          {/* <ProgressTabRelatedLinksSlot /> */}
         </div>
       </div>
       </PluginSlot>

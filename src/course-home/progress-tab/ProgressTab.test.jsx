@@ -201,6 +201,41 @@ describe('Progress Tab', () => {
       expect(screen.getByText('A weighted grade of 80% is required to pass in this course')).toBeInTheDocument();
     });
 
+    it('renders current grade tooltip when assignmentTypeGradeSummary is missing', async () => {
+      axiosMock.onGet(progressUrl).reply(200, {
+        course_grade: {
+          is_passing: false,
+          letter_grade: null,
+          percent: 0.5,
+        },
+        section_scores: [
+          {
+            display_name: 'First section',
+            subsections: [
+              {
+                assignment_type: 'Homework',
+                block_key: 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@12345',
+                display_name: 'First subsection',
+                learner_has_access: true,
+                has_graded_assignment: true,
+                num_points_earned: 1,
+                num_points_possible: 2,
+                percent_graded: 0.0,
+                show_correctness: 'always',
+                show_grades: true,
+                url: 'http://learning.edx.org/course/course-v1:edX+Test+run/first_subsection',
+              },
+            ],
+          },
+        ],
+      });
+
+      await fetchAndRender();
+
+      expect(screen.getByTestId('currentGradeTooltipContent').innerHTML).toEqual('50%');
+      expect(screen.getByText('A weighted grade of 75% is required to pass in this course')).toBeInTheDocument();
+    });
+
     it('renders correct copy and tooltip in CourseGradeFooter for passing with letter grade range', async () => {
       setTabData({
         course_grade: {

@@ -5,6 +5,8 @@ import { useDispatch } from 'react-redux';
 import { getConfig } from '@edx/frontend-platform';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { breakpoints, useWindowSize } from '@openedx/paragon';
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
+
 
 import { AlertList } from '@src/generic/user-messages';
 import { useModel } from '@src/generic/model-store';
@@ -107,14 +109,20 @@ const Course = ({
       </div>
 
       <AlertList topic="sequence" />
-      <Sequence
-        unitId={unitId}
-        sequenceId={sequenceId}
-        courseId={courseId}
-        unitNavigationHandler={unitNavigationHandler}
-        nextSequenceHandler={nextSequenceHandler}
-        previousSequenceHandler={previousSequenceHandler}
-      />
+      <PluginSlot
+        id="org.openedx.frontend.learning.course_outline.v1"
+        idAliases={['course_outline']}
+        pluginProps={{ courseId, sequenceId, unitId }}
+      >
+        <Sequence
+          unitId={unitId}
+          sequenceId={sequenceId}
+          courseId={courseId}
+          unitNavigationHandler={unitNavigationHandler}
+          nextSequenceHandler={nextSequenceHandler}
+          previousSequenceHandler={previousSequenceHandler}
+        />
+      </PluginSlot>
       <CelebrationModal
         courseId={courseId}
         isOpen={firstSectionCelebrationOpen}

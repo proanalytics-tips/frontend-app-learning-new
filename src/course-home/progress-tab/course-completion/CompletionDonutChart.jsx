@@ -12,12 +12,14 @@ const CompletionDonutChart = () => {
   const courseId = useContextId();
 
   const {
-    completionSummary: {
-      completeCount,
-      incompleteCount,
-      lockedCount,
-    },
+    completionSummary,
   } = useModel('progress', courseId);
+
+  const {
+    completeCount = 0,
+    incompleteCount = 0,
+    lockedCount = 0,
+  } = completionSummary ?? {};
 
   const numTotalUnits = completeCount + incompleteCount + lockedCount;
   const completePercentage = completeCount ? Number(((completeCount / numTotalUnits) * 100).toFixed(0)) : 0;

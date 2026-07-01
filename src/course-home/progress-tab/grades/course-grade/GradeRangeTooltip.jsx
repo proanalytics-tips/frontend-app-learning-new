@@ -24,8 +24,9 @@ const GradeRangeTooltip = ({ iconButtonClassName, passingGrade }) => {
 
   const [showTooltip, setShowTooltip] = useState(false);
 
-  const orderedGradeRange = Object.entries(gradeRange).sort((a, b) => (
-    gradeRange[b[0]] - gradeRange[a[0]]
+  const safeGradeRange = gradeRange ?? {};
+  const orderedGradeRange = Object.entries(safeGradeRange).sort((a, b) => (
+    safeGradeRange[b[0]] - safeGradeRange[a[0]]
   ));
 
   return (

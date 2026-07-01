@@ -26,7 +26,8 @@ const CurrentGradeTooltip = ({ tooltipClassName }) => {
 
   const isLocaleRtl = isRtl(getLocale());
 
-  const hasHiddenGrades = assignmentTypeGradeSummary.some((assignmentType) => assignmentType.hasHiddenContribution !== 'none');
+  const safeAssignmentTypeGradeSummary = assignmentTypeGradeSummary ?? [];
+  const hasHiddenGrades = safeAssignmentTypeGradeSummary.some((assignmentType) => assignmentType.hasHiddenContribution !== 'none');
 
   if (isLocaleRtl) {
     currentGradeDirection = currentGrade < 50 ? '-' : '';
@@ -39,7 +40,7 @@ const CurrentGradeTooltip = ({ tooltipClassName }) => {
         placement="top"
         overlay={(
           <Popover id={`${isPassing ? 'passing' : 'non-passing'}-grade-tooltip`} aria-hidden="true" className={tooltipClassName}>
-            <Popover.Content data-testid="currentGradeTooltipContent" className={isPassing ? 'text-white' : 'text-dark-700'}>
+            <Popover.Content data-testid="currentGradeTooltipContent" className="text-white">
               {currentGrade.toFixed(0)}{isLocaleRtl ? '\u200f' : ''}%
             </Popover.Content>
           </Popover>

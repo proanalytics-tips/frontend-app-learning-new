@@ -21,7 +21,7 @@
   }
 
   .grade-bar--current-non-passing {
-    fill: var(--pgn-color-accent-b);
+    fill: rgb(255, 149, 42);
   }
 }
 
@@ -44,9 +44,9 @@
 }
 
 #non-passing-grade-tooltip {
-  background: var(--pgn-color-accent-b);
+  background: rgb(255, 149, 42);
 
   .arrow::after {
-    border-top-color: var(--pgn-color-accent-b);
+    border-top-color: rgb(255, 149, 42);
   }
 }

@@ -11,7 +11,6 @@ import ProgressHeader from './ProgressHeader';
 import ProgressTabCertificateStatusMainBodySlot from '../../plugin-slots/ProgressTabCertificateStatusMainBodySlot';
 import ProgressTabCourseGradeSlot from '../../plugin-slots/ProgressTabCourseGradeSlot';
 import ProgressTabGradeBreakdownSlot from '../../plugin-slots/ProgressTabGradeBreakdownSlot';
-import ProgressTabRelatedLinksSlot from '../../plugin-slots/ProgressTabRelatedLinksSlot';
 import { useModel } from '../../generic/model-store';
 
 const ProgressTab = () => {
@@ -21,12 +20,12 @@ const ProgressTab = () => {
     completionSummary,
     disableProgressGraph,
     creditCourseRequirements,
-    gradesFeatureIsFullyLocked,
-    gradesFeatureIsPartiallyLocked,
+
     gradingPolicy,
     sectionScores,
   } = useModel('progress', courseId);
 
+  const { isStaff } = useModel('courseHomeMeta', courseId);
 
   const windowWidth = useWindowSize().width;
   if (windowWidth === undefined) {
@@ -37,18 +36,24 @@ const ProgressTab = () => {
   }
 
   return (
-    <>
+    <div
+      style={{
+        maxWidth: "1600px",
+        margin: "0 auto",
+        width: "100%",
+        padding: "0 12px",
+      }}
+    >
       <PluginSlot
         id="org.openedx.frontend.learning.course_progress_page"
         idAliases={['course_home_progress_slot']}
         pluginProps={{
           completionSummary,
-          disableProgressGraph,
           creditCourseRequirements,
-          gradesFeatureIsFullyLocked,
-          gradesFeatureIsPartiallyLocked,
+          courseId,
           gradingPolicy,
-          sectionScores
+          sectionScores,
+          isStaff,
         }}
       >
       <ProgressHeader />
@@ -68,7 +73,7 @@ const ProgressTab = () => {
         </div>
       </div>
       </PluginSlot>
-    </>
+    </div>
   );
 };
 

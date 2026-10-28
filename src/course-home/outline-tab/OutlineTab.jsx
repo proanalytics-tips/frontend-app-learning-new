@@ -58,6 +58,7 @@ const OutlineTab = () => {
       courseDateBlocks,
     },
     enableProctoredExams,
+    resumeCourse,
   } = useModel('outline', courseId);
   const { originalUserIsStaff } = useModel('courseHomeMeta', courseId);
 
@@ -124,7 +125,7 @@ const OutlineTab = () => {
     <PluginSlot
       id="org.openedx.frontend.learning.course_home_section"
       idAliases={['course_home_section_slot']}
-      pluginProps={{ courses, sections, originalUserIsStaff, rootCourseId, sequences }}
+      pluginProps={{ courses, sections, originalUserIsStaff, rootCourseId, sequences, resumeCourse }}
     >
         <div data-learner-type={learnerType} className="row w-100 mx-0 my-3 justify-content-between">
           <div className="col-12 col-sm-auto p-0">

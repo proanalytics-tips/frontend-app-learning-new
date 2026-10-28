@@ -20,3 +20,26 @@ export const getLatestDueDateInFuture = (assignmentTypeGradeSummary) => {
   });
   return latest;
 };
+
+// Progress API totals cover graded questions; practice/homework may only have problem scores.
+export const getSubsectionScore = (subsection) => {
+  const number = (value) => (typeof value === "number" && Number.isFinite(value) ? value : undefined);
+  const problems = (subsection.problemScores ?? []).reduce((total, problem) => ({
+    earned: total.earned + (number(problem.earned) ?? 0),
+    possible: total.possible + (number(problem.possible) ?? 0),
+  }), { earned: 0, possible: 0 });
+  const possible = number(subsection.numPointsPossible);
+  if ((!possible || possible <= 0) && problems.possible > 0) return problems;
+  return {
+    earned: number(subsection.numPointsEarned) ?? problems.earned,
+    possible: possible ?? problems.possible,
+  };
+};
+
+export const hasSubsectionAssignments = (subsection) => {
+  const score = getSubsectionScore(subsection);
+  return (subsection.problemScores ?? []).length > 0 ||
+    subsection.hasGradedAssignment === true ||
+    (typeof subsection.assignmentType === "string" && subsection.assignmentType.trim().length > 0) ||
+    score.possible > 0 || score.earned > 0;
+};

@@ -23,6 +23,7 @@ const ProgressTab = () => {
 
     gradingPolicy,
     sectionScores,
+    courseGrade,
   } = useModel('progress', courseId);
 
   const { isStaff } = useModel('courseHomeMeta', courseId);
@@ -52,6 +53,7 @@ const ProgressTab = () => {
           courseId,
           gradingPolicy,
           sectionScores,
+          courseGrade,
           isStaff,
         }}
       >

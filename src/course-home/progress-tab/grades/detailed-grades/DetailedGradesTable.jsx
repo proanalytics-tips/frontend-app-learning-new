@@ -5,7 +5,7 @@ import { useContextId } from '../../../../data/hooks';
 import { useModel } from '../../../../generic/model-store';
 import messages from '../messages';
 import SubsectionTitleCell from './SubsectionTitleCell';
-import { showUngradedAssignments } from '../../utils';
+import { getSubsectionScore, hasSubsectionAssignments } from '../../utils';
 import './DetailedGradesTable.scss';
 
 const DetailedGradesTable = () => {
@@ -21,21 +21,22 @@ const DetailedGradesTable = () => {
   return (
     safeSectionScores.map((chapter) => {
       const subsectionScores = (chapter.subsections ?? []).filter(
-        (subsection) => !!(
-          (showUngradedAssignments() || subsection.hasGradedAssignment)
-            && subsection.showGrades
-            && (subsection.numPointsPossible > 0 || subsection.numPointsEarned > 0)
-        ),
+        // Keep practice and pending homework, but omit lectures without assignments.
+        (subsection) => !!subsection.showGrades && hasSubsectionAssignments(subsection),
       );
 
       if (subsectionScores.length === 0) {
         return null;
       }
 
-      const detailedGradesData = subsectionScores.map((subsection) => ({
-        subsectionTitle: <SubsectionTitleCell subsection={subsection} />,
-        score: <span className={subsection.learnerHasAccess ? '' : 'greyed-out'}>{subsection.numPointsEarned}{isLocaleRtl ? '\\' : '/'}{subsection.numPointsPossible}</span>,
-      }));
+      const detailedGradesData = subsectionScores.map((subsection) => {
+        const score = getSubsectionScore(subsection);
+        const formatPoints = (value) => String(Number(value.toFixed(1)));
+        return {
+          subsectionTitle: <SubsectionTitleCell subsection={subsection} />,
+          score: <span className={subsection.learnerHasAccess ? '' : 'greyed-out'}>{formatPoints(score.earned)}{isLocaleRtl ? '\\' : '/'}{formatPoints(score.possible)}</span>,
+        };
+      });
 
       return (
         <div className="my-3 detailed-grades-table" key={`${chapter.displayName}-grades-table`}>

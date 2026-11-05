@@ -76,4 +76,17 @@ describe('Instructor Toolbar', () => {
 
     expect(screen.queryByText('View course in:')).not.toBeInTheDocument();
   });
+
+  it('updates the Studio link when navigating between units', () => {
+    const config = { ...originalConfig, STUDIO_BASE_URL: 'http://studio.example.com' };
+    getConfig.mockImplementation(() => config);
+    const { rerender } = render(<InstructorToolbar {...mockData} />);
+
+    expect(screen.getByRole('link', { name: 'Studio' })).toHaveAttribute('href', `${config.STUDIO_BASE_URL}/container/${mockData.unitId}`,);
+
+    const nextUnitId = Object.values(models.units)[1].id;
+    rerender(<InstructorToolbar {...mockData} unitId={nextUnitId} />);
+
+    expect(screen.getByRole('link', { name: 'Studio' })).toHaveAttribute('href', `${config.STUDIO_BASE_URL}/container/${nextUnitId}`,);
+  });
 });

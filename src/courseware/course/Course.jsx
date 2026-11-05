@@ -10,6 +10,7 @@ import { PluginSlot } from '@openedx/frontend-plugin-framework';
 
 import { AlertList } from '@src/generic/user-messages';
 import { useModel } from '@src/generic/model-store';
+import { decodeUrl } from '../../decode-page-route';
 import Chat from './chat/Chat';
 import SidebarProvider from './sidebar/SidebarContextProvider';
 import NewSidebarProvider from './new-sidebar/SidebarContextProvider';
@@ -112,7 +113,12 @@ const Course = ({
       <PluginSlot
         id="org.openedx.frontend.learning.course_outline.v1"
         idAliases={['course_outline']}
-        pluginProps={{ courseId, sequenceId, unitId }}
+        pluginProps={{
+          courseId,
+          sequenceId,
+          unitId,
+          onNavigate: (path, options) => navigate(decodeUrl(path.replace(/^\/learning(?=\/)/, '')), options),
+        }}
       >
         <Sequence
           unitId={unitId}
